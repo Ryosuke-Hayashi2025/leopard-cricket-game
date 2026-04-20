@@ -456,10 +456,10 @@ export default function GamePage() {
         }
         const img = getImg(IMG_CRICKET);
         if (img) {
-          const flipC = c.vx < 0;
+          const flipC = c.vx > 0;
           drawFlipped(ctx, img, c.x, c.y, CRICKET_W, CRICKET_H, flipC);
         } else {
-          drawCricketFallback(ctx, c, c.vx < 0);
+          drawCricketFallback(ctx, c, c.vx > 0);
         }
       });
 
