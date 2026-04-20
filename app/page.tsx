@@ -850,7 +850,7 @@ export default function GamePage() {
           </div>
 
           <p className="game-title-desc text-xs mt-3">
-            BGM：魔王魂　効果音：効果音ラボ
+            BGM：魔王魂　効果音：効果音ラボ　音声：音読さん
           </p>
         </div>
       )}
@@ -880,8 +880,6 @@ export default function GamePage() {
             handleTap(t.clientX, t.clientY);
           }}
         />
-
-        <p className="game-hint">🦗 コオロギをタップ / クリック！</p>
 
         <button
           type="button"
