@@ -18,7 +18,7 @@ const DIFFICULTY_CONFIG: Record<Difficulty, {
   tapRadius: number;
 }> = {
   normal: { gameDuration: 30, escapeFloor: 0.00, speedMult: 1.0, tapRadius: 60 },
-  hard:   { gameDuration: 20, escapeFloor: 0.00, speedMult: 1.8, tapRadius: 60 },
+  hard:   { gameDuration: 15, escapeFloor: 0.00, speedMult: 2.5, tapRadius: 60 },
 };
 const GROUND_Y = 550;
 const LEOPA_BASE_X = 40;
@@ -839,7 +839,7 @@ export default function GamePage() {
               ▶ 通常版スタート（30秒）
             </button>
             <button type="button" className="game-btn-hard" onClick={() => startGame("hard")}>
-              🔥 激むずスタート（20秒）
+              🔥 激むずスタート（15秒）
             </button>
           </div>
 
