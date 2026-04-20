@@ -9,8 +9,9 @@ export type ResultType = "clear" | "gameover";
 export type Difficulty = "normal" | "hard";
 
 export async function logPlay(difficulty: Difficulty, result: ResultType, score: number) {
-  if (!supabase) return;
-  await supabase.from("leopa_cricket_game_plays").insert({ difficulty, result, score });
+  if (!supabase) { console.warn("[supabase] client is null"); return; }
+  const { error } = await supabase.from("leopa_cricket_game_plays").insert({ difficulty, result, score });
+  if (error) console.error("[supabase] insert error", error);
 }
 
 export async function fetchStats(): Promise<{
