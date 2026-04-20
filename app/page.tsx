@@ -828,13 +828,13 @@ export default function GamePage() {
             <img src={IMG_LEOPA[titleLeopaImg]} alt="レオパ" width={160} height={160} />
           </div>
 
-          <div className="game-title-desc text-sm leading-relaxed text-left">
+          <div className="game-title-desc text-sm leading-relaxed text-left w-full max-w-xs mx-auto">
             <p>🎯 コオロギをタップでレオパが突進！</p>
             <p>🎯 ５匹全部食べたらクリア！</p>
             <p>🎯 ど真ん中を狙え！外したらなんでやねん！</p>
           </div>
 
-          <div className="flex flex-col gap-3 w-full max-w-xs">
+          <div className="flex flex-col gap-3 w-full max-w-xs mx-auto">
             <button type="button" className="game-btn-start" onClick={() => startGame("normal")}>
               ▶ 通常版スタート（30秒）
             </button>
