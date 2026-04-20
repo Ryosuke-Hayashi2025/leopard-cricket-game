@@ -6,12 +6,11 @@ import { logPlay, fetchStats, type ResultType, type Difficulty } from "./lib/sup
 // ============================================================
 // 定数
 // ============================================================
-const CANVAS_W = 800;
-const CANVAS_H = 450;
+const CANVAS_W = 400;
+const CANVAS_H = 640;
 const CRICKET_COUNT = 5;
 
 // ===== 難易度設定 =====
-// escapeFloor: 完璧なタップでも最低この確率で逃げる（超激むずのみ設定）
 const DIFFICULTY_CONFIG: Record<Difficulty, {
   gameDuration: number;
   escapeFloor: number;
@@ -21,8 +20,8 @@ const DIFFICULTY_CONFIG: Record<Difficulty, {
   normal: { gameDuration: 30, escapeFloor: 0.00, speedMult: 1.0, tapRadius: 60 },
   hard:   { gameDuration: 20, escapeFloor: 0.00, speedMult: 1.8, tapRadius: 60 },
 };
-const GROUND_Y = 360;
-const LEOPA_BASE_X = 60;
+const GROUND_Y = 550;
+const LEOPA_BASE_X = 40;
 const LEOPA_W = 112;
 const LEOPA_H = 112;
 const CRICKET_W = 72;
@@ -100,7 +99,7 @@ interface GameRef {
 let _cricketId = 0;
 
 function spawnCricket(): Cricket {
-  const minX = 160;
+  const minX = 60;
   const maxX = CANVAS_W - CRICKET_W - 20;
   const minY = 40;
   const maxY = GROUND_Y - CRICKET_H - 4;
@@ -274,6 +273,28 @@ export default function GamePage() {
   const [resultType, setResultType] = useState<ResultType>("gameover");
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
   const [stats, setStats] = useState({ normalTotal: 0, normalClear: 0, normalTopScore: 0, hardTotal: 0, hardClear: 0, hardTopScore: 0 });
+  const [titleLeopaImg, setTitleLeopaImg] = useState<LeopaState>("idle");
+
+  // タイトル画面のレオパアニメーション（idle→crouch→jump→eat→idle...）
+  useEffect(() => {
+    if (phase !== "title") return;
+    const seq: { state: LeopaState; dur: number }[] = [
+      { state: "idle",   dur: 1800 },
+      { state: "crouch", dur: 300  },
+      { state: "jump",   dur: 400  },
+      { state: "eat",    dur: 700  },
+    ];
+    let idx = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    const next = () => {
+      idx = (idx + 1) % seq.length;
+      setTitleLeopaImg(seq[idx].state);
+      timer = setTimeout(next, seq[idx].dur);
+    };
+    setTitleLeopaImg(seq[0].state);
+    timer = setTimeout(next, seq[0].dur);
+    return () => clearTimeout(timer);
+  }, [phase]);
 
   useEffect(() => {
     const srcs = [
@@ -385,21 +406,21 @@ export default function GamePage() {
       // 岩（左奥）
       ctx.fillStyle = "#7a6040";
       ctx.beginPath();
-      ctx.ellipse(90, CANVAS_H - 40, 70, 42, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(60, CANVAS_H - 40, 55, 38, -0.2, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = "#9a7a50";
       ctx.beginPath();
-      ctx.ellipse(80, CANVAS_H - 52, 50, 30, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(50, CANVAS_H - 52, 38, 26, -0.2, 0, Math.PI * 2);
       ctx.fill();
 
       // 岩（右奥）
       ctx.fillStyle = "#7a6040";
       ctx.beginPath();
-      ctx.ellipse(700, CANVAS_H - 35, 90, 38, 0.15, 0, Math.PI * 2);
+      ctx.ellipse(340, CANVAS_H - 35, 65, 34, 0.15, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = "#9a7a50";
       ctx.beginPath();
-      ctx.ellipse(720, CANVAS_H - 50, 60, 28, 0.15, 0, Math.PI * 2);
+      ctx.ellipse(355, CANVAS_H - 50, 44, 24, 0.15, 0, Math.PI * 2);
       ctx.fill();
 
       // 小石をランダム配置（静的）
@@ -479,7 +500,7 @@ export default function GamePage() {
         ctx.save();
         ctx.globalAlpha = alpha;
         if (nImg) {
-          ctx.drawImage(nImg, CANVAS_W / 2 - 260, 10, 520, 234);
+          ctx.drawImage(nImg, CANVAS_W / 2 - 160, 10, 320, 144);
         } else {
           ctx.font = "bold 56px Arial, sans-serif";
           ctx.textAlign = "center";
@@ -638,7 +659,7 @@ export default function GamePage() {
       c.x += c.vx * dt;
       c.y += c.vy * dt;
 
-      const minX = 140;
+      const minX = 10;
       const maxX = CANVAS_W - CRICKET_W - 10;
       if (c.x < minX) { c.x = minX; c.vx = Math.abs(c.vx); }
       if (c.x > maxX) { c.x = maxX; c.vx = -Math.abs(c.vx); }
@@ -788,6 +809,7 @@ export default function GamePage() {
   // ============================================================
   return (
     <div className={`game-root${phase === "playing" ? " game-screen--active" : ""}`}>
+      <div className="w-full max-w-sm">
       {/* ===== タイトル画面 ===== */}
       {phase === "title" && (
         <div className="text-center space-y-4 px-4 py-4" onClick={() => { if (!hasInteracted) { setHasInteracted(true); } }}>
@@ -803,7 +825,7 @@ export default function GamePage() {
           {/* レオパをどーんと表示 */}
           <div className="flex justify-center py-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/leopa-idle.png" alt="レオパ" width={160} height={160} />
+            <img src={IMG_LEOPA[titleLeopaImg]} alt="レオパ" width={160} height={160} />
           </div>
 
           <div className="game-title-desc text-sm leading-relaxed text-left">
@@ -947,6 +969,7 @@ export default function GamePage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
